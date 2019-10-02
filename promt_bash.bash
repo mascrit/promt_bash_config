@@ -11,17 +11,36 @@ COLOR_RESET="\033[0m"
 COLOR_GRAY="\033[38;5;8m"
 COLOR_MALI="\033[38;5;51m"
 
+check_status() {
+
+    red="$bold$(tput setaf 1)"
+    green=$(tput setaf 2)
+
+    boshka= git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/' > /dev/null 2>&1
+
+
+    # Checks if something to commit or not
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+	if ! git status | grep "limpio" > /dev/null 2>&1; then
+	    echo "${red}x"
+	    return 0
+	elif $boshka; then
+	    echo "${green}✓"
+	fi
+    fi
+
+}
+
 parse_git_branch() {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/git(\1) /'
-    }
+}
 
 
 PS1="\[$COLOR_MORADO\]\u\[$COLOR_RESET\]"
 PS1+="\[$COLOR_SAL\]@\[$COLOR_RESET\]"
 PS1+="\[$COLOR_AM\]\h\[$COLOR_RESET\]:"
-PS1+="\[$COLOR_GRAY\]pt/\l->\[$COLOR_RESET\]"
+PS1+="\[$COLOR_MORADO\]pt/\l->\[$COLOR_RESET\]"
 PS1+=" \[$COLOR_MALI\][\w] \[$COLOR_RESET\](\[$COLOR_RED\]"
 PS1+="\[$COLOR_RED\]\$?\[$COLOR_RESET\])\n\[$COLOR_YELLOW\]\$(parse_git_branch)"
-PS1+="\[$COLOR_RESET\]\\$ \[$(tput sgr0)\]"
+PS1+="\[$COLOR_RESET\]\$(check_status)\[$COLOR_RESET\]\\$ \[$(tput sgr0)\]"
 export PS1
-
