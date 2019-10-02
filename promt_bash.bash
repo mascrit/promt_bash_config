@@ -19,7 +19,7 @@ parse_git_branch() {
 PS1="\[$COLOR_MORADO\]\u\[$COLOR_RESET\]"
 PS1+="\[$COLOR_SAL\]@\[$COLOR_RESET\]"
 PS1+="\[$COLOR_AM\]\h\[$COLOR_RESET\]:"
-PS1+="\[$COLOR_GRAY\]pt\\\l->\[$COLOR_RESET\]"
+PS1+="\[$COLOR_GRAY\]pt/\l->\[$COLOR_RESET\]"
 PS1+=" \[$COLOR_MALI\][\w] \[$COLOR_RESET\](\[$COLOR_RED\]"
 PS1+="\[$COLOR_RED\]\$?\[$COLOR_RESET\])\n\[$COLOR_YELLOW\]\$(parse_git_branch)"
 PS1+="\[$COLOR_RESET\]\\$ \[$(tput sgr0)\]"
