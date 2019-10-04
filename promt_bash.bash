@@ -32,15 +32,14 @@ check_status() {
 }
 
 parse_git_branch() {
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/git(\1) /'
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ git(\1) /'
 }
-
-
 PS1="\[$COLOR_MORADO\]\u\[$COLOR_RESET\]"
 PS1+="\[$COLOR_SAL\]@\[$COLOR_RESET\]"
 PS1+="\[$COLOR_AM\]\h\[$COLOR_RESET\]:"
-PS1+="\[$COLOR_MORADO\]pt/\l->\[$COLOR_RESET\]"
-PS1+=" \[$COLOR_MALI\][\w] \[$COLOR_RESET\](\[$COLOR_RED\]"
-PS1+="\[$COLOR_RED\]\$?\[$COLOR_RESET\])\n\[$COLOR_YELLOW\]\$(parse_git_branch)"
-PS1+="\[$COLOR_RESET\]\$(check_status)\[$COLOR_RESET\]\\$ \[$(tput sgr0)\]"
+PS1+="\[$COLOR_MORADO\]pt/\l->"
+PS1+="\[$COLOR_YELLOW\]\$(parse_git_branch)"
+PS1+="\[$COLOR_RESET\]\$(check_status)\[$COLOR_RESET\]\[$COLOR_RESET\]"
+PS1+=" \[$COLOR_MALI\][\w] \[$COLOR_RESET\](\[$COLOR_RED\]\[$COLOR_RED\]\$?\[$COLOR_RESET\])\n"
+PS1+="\\$ \[$(tput sgr0)\]"
 export PS1
