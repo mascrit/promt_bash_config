@@ -11,8 +11,8 @@ COLOR_RESET="\033[0m"
 COLOR_GRAY="\033[38;5;8m"
 COLOR_MALI="\033[38;5;51m"
 
-check_status() {
 
+function git-dirty {
     red="$bold$(tput setaf 1)"
     green=$(tput setaf 2)
 
@@ -22,24 +22,44 @@ check_status() {
     # Checks if something to commit or not
     if git rev-parse --git-dir > /dev/null 2>&1; then
 	if ! git status | grep "limpio" > /dev/null 2>&1; then
-	    echo "${red}x"
+	    export GIT_DIRTY=" ${red}x"
 	    return 0
 	elif $boshka; then
-	    echo "${green}✓"
+	    export GIT_DIRTY=" ${green}✓"
 	fi
+    else
+	export GIT_DIRTY=""
     fi
 
 }
 
-parse_git_branch() {
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ git(\1) /'
+function git_branch {
+    if git status > /dev/null 2>&1; then
+        # Only get the name of the branch
+        export GIT_STATUS=' git('$(git branch --show-current)')'
+    else
+        export GIT_STATUS=""
+    fi
 }
+
+function prompt_command {
+    # Check if we are inside a git repository
+    git_branch;
+    git-dirty;
+    
+    red="$bold$(tput setaf 1)"
+    green=$(tput setaf 2)
+}
+# This function gets called every time PS1 is shown
+PROMPT_COMMAND=prompt_command
+
+
 PS1="\[$COLOR_MORADO\]\u\[$COLOR_RESET\]"
 PS1+="\[$COLOR_SAL\]@\[$COLOR_RESET\]"
 PS1+="\[$COLOR_AM\]\h\[$COLOR_RESET\]:"
 PS1+="\[$COLOR_MORADO\]pt/\l->"
-PS1+="\[$COLOR_YELLOW\]\$(parse_git_branch)"
-PS1+="\[$COLOR_RESET\]\$(check_status)\[$COLOR_RESET\]\[$COLOR_RESET\]"
-PS1+=" \[$COLOR_MALI\][\w] \[$COLOR_RESET\](\[$COLOR_RED\]\[$COLOR_RED\]\$?\[$COLOR_RESET\])\n"
-PS1+="\\$ \[$(tput sgr0)\]"
+PS1+="\[$COLOR_YELLOW\]\$GIT_STATUS\$GIT_DIRTY"
+PS1+="\[$COLOR_RESET\]\[$COLOR_RESET\]\[$COLOR_RESET\]"
+PS1+=" \[$COLOR_MALI\][\w] \[$COLOR_RESET\]\[$COLOR_RED\]\[$COLOR_RESET\](\[$COLOR_RED\]\$?\[$COLOR_RESET\])"
+PS1+="\n\\$ "
 export PS1
